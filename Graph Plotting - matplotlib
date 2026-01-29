@@ -1,0 +1,40 @@
+import matplotlib.pyplot as plt
+
+def histogram(lst: list[dict], letter: str)-> str:
+            
+    if lst == []:
+        return "Empty list."
+  
+    values = []
+    hist = True 
+    for i  in lst:
+        values.append(i[letter])
+        
+    hist = True
+    for v in values:
+        try:
+            float(v)  
+        except:
+            hist = False  
+
+    if hist:      
+        fig1 = plt.figure()
+        plt.title(f"Histogram of {letter}")
+        plt.xlabel(letter)
+        plt.ylabel("Frequency")
+        plt.hist(values,10)
+        plt.show()
+        return max(values)
+    else:
+        fig1 = plt.figure()
+        plt.title(f"Bar Chart of {letter}")
+        plt.xlabel(letter)
+        plt.ylabel("Count")
+        category = {}
+        for i in lst:
+            key = str(i[letter])
+            category[key]= category.get(key ,0)+1
+                
+        plt.bar(category.keys(), category.values(), color="skyblue")
+        plt.show()
+        return -1

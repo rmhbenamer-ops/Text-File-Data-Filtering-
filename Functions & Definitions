@@ -1,0 +1,82 @@
+import string 
+#==========================================#
+def load_data(file_name, filter_dict):
+    """Return a filtered list of students and their information provided the file and sorting parameters
+    >>>('student-mat.csv,{'Failures': 0})
+    [ {'School': 'GP', 'ID': 22, 'Age': 18, 'StudyTime':7.0, 'Health': 3,
+    'Absences': 7, 'FallGrade': 12, 'WinterGrade': 13},
+    {another element]...]
+    >>>('student-mat.csv,{'All': -1})
+    [ {'School': 'GP', 'ID': 22, 'Age': 18, 'StudyTime': 7.0, 'Failures': 1,
+    'Health': 3, 'Absences': 7, 'FallGrade': 12, 'WinterGrade': 13},
+    {another element}...]
+    >>>('student-mat.csv,{'StudyTime':2})
+    [ {'School': 'GP', 'ID': 2, 'Age': 17, 'Failures': 0,
+    'Health': 3, 'Absences': 6, 'FallGrade': 5, 'WinterGrade': 6},
+    {another element}...]
+    
+    Preconditions: NA
+    """
+    f = open(file_name, "r")
+    total_list = []
+
+    filter_key = list(filter_dict.keys())[0]
+    filter_value = filter_dict[filter_key]
+
+    v_keys = ["School", "Age", "Health", "Failures", "All"]
+    if filter_key not in v_keys:
+        print("Invalid Value")
+        f.close()
+        return []
+
+    header = True
+    for line in f:
+        line = line.strip()
+        if header:
+            header_lst = line.split(",")
+            header = False
+        else:
+            values = line.split(",")
+            student = {}
+            for i in range(len(header_lst)):
+                key = header_lst[i]
+                val = values[i]
+
+                # Try to convert to int, then float, else keep string
+                try:
+                    student[key] = int(val)
+                except ValueError:
+                    try:
+                        student[key] = float(val)
+                    except ValueError:
+                        student[key] = val
+
+            # Apply filter
+            if filter_key == "All":
+                total_list.append(student)
+            else:
+                if student.get(filter_key) == filter_value:
+                    del student[filter_key]
+                    total_list.append(student)
+
+    f.close()
+    return total_list
+
+#==========================================#
+def add_average(student_list):
+    """Return the list of students with a new key 'AvgGrade' storing the average
+    of FallGrade and WinterGrade rounded to two decimals.
+
+    
+    >>> add_average([{'School': 'GP', 'ID': 22, 'Age': 18, 'StudyTime': 7.0,
+                      'Failures': 1, 'Health': 3, 'Absences': 7,
+                      'FallGrade': 12, 'WinterGrade': 13}])
+    [{'School': 'GP', 'ID': 22, 'Age': 18, 'StudyTime': 7.0, 'Failures': 1,
+      'Health': 3, 'Absences': 7, 'FallGrade': 12, 'WinterGrade': 13,
+      'AvgGrade': 12.5}]
+    """
+    for student in student_list:
+        avg = (student["FallGrade"] + student["WinterGrade"]) / 2
+        student["AvgGrade"] = round(avg, 2)
+    return student_list
+       

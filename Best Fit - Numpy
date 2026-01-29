@@ -1,0 +1,62 @@
+import numpy as np
+
+            
+def curve_fit(lst_of_dic: list[dict], attribute: str, degree: int)-> str:
+
+    avg_grade = {}
+    
+    for i in lst_of_dic:
+        #PROVIDES ACCES TO DICTIONARIES INSIDE THE LIST
+        #WE WANT TO GROUP BASED ON ATTRIBUTE
+        if attribute in i:
+            #CHECKS IF THE ATTRIBUTE IS PRESENT IN THE DICITONARY OF THE MOMENT
+            #CHECKS IF GRADE VALUES ALREADY IN AVG_GRADE DICTIOANRY
+            if i[attribute] not in avg_grade:
+                #IF NOT IT CREATES AN EMPTY LIST
+                avg_grade[i[attribute]] = []
+            #APPENDS TO A DIC OF VALUE ATTRIBUTE A LIST OF GRADES
+            avg_grade[i[attribute]].append(i["AvgGrade"])
+
+    mark = {}
+    for keys, values in avg_grade.items():
+        avg = sum(values) / len(values)
+        mark[keys] = avg
+
+    #KEYS ARE THE ATTRIBUTE VALUES AND VALUES IS AVG GRADES
+    x_val = []
+    y_val = []
+    
+    for i,z in mark.items():
+        x_val.append(float(i))
+        y_val.append(float(z))
+        
+    max_degree = len(x_val) - 1
+    
+    if max_degree < degree:
+        eqn = np.polyfit(x_val,y_val,max_degree)
+        deg = max_degree
+    else:
+        eqn = np.polyfit(x_val,y_val,degree)
+        deg = degree
+        
+    final_string = []
+    for i in range(len(eqn)):
+        exp = deg - i
+
+        if exp == 0:
+            term = f"{eqn[i]}"
+        elif exp == 1:
+            term = f"{eqn[i]}x"
+        else:
+            term = f"{eqn[i]}x^{exp}"
+
+        if len(final_string) == 0:
+            final_string.append(term)
+        else:
+            final_string.append(f"+ {term}" if eqn[i] > 0 else f" {term}")
+        
+    eqn_string = "y = "
+    for r in final_string:
+        eqn_string += r
+        
+    return eqn_string

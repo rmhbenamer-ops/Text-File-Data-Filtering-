@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def histogram(lst: list[dict], letter: str)-> str:
+def histogram(lst: list[dict], letter: str)-> float:
             
     if lst == []:
         return "Empty list."
